@@ -1,4 +1,4 @@
-# bifrost-plugin
+# @a5gard/bifrost-plugin
 
 Plugin installer / wizard for bifrost projects.
 
@@ -9,7 +9,7 @@ Plugin installer / wizard for bifrost projects.
 Once your project has completed its installation process, you may now cd into the newly created directory and run:
 
 ```bash
-bunx bifrost-plugin
+bunx @a5gard/bifrost-plugin
 ```
 
 Entering interactive mode it will display the following options:
@@ -22,17 +22,17 @@ Entering interactive mode it will display the following options:
 Running the following command will start plugin installation process:
 
 ```bash
-bunx bifrost-plugin list
+bunx @a5gard/bifrost-plugin list
 ```
 
-The installer will then obtain the list of available plugins to choose from the bifrost-plugin repo (owner `8an3`) from the file labeled `registry.bifrost`
+The installer will then obtain the list of available plugins to choose from the @a5gard/bifrost-plugin repo (owner `8an3`) from the file labeled `registry.bifrost`
 
 ### Direct Installation
 
 or you may use the supplied method 
 
 ```bash
-bunx bifrost-plugin otp-auth-plugin
+bunx @a5gard/bifrost-plugin otp-auth-plugin
 ```
 
 Which will immediatly start the installation process, after scanning your projects config.bifrost to see if the platforms match for compatibility to ensure you are installing the correct plugin.
@@ -43,7 +43,7 @@ Which will immediatly start the installation process, after scanning your projec
 Running the following command will start the create plugin wizard:
 
 ```bash
-bunx bifrost-plugin create
+bunx @a5gard/bifrost-plugin create
 ```
 
 Where it will then inquirer:
@@ -129,7 +129,7 @@ When installing a plugin it will prompt the user to either confirm the default s
 Running the following command will start the submission process without the need of interactive mode:
 
 ```bash
-bunx bifrost-plugin submit
+bunx @a5gard/bifrost-plugin submit
 ```
 
 Selecting this option will automate the submission process for you, adding your plugin to the libraries registry. Allowing you to share you plugin with others that will also be posted on the site to allow users to find it more easily. 
