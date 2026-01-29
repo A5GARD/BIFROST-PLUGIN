@@ -190,7 +190,7 @@ build/
   console.log(chalk.cyan('Next steps:'));
   console.log(chalk.gray(`  1. Add your plugin files to ${answers.name}/files/`));
   console.log(chalk.gray(`  2. Update plugin.bifrost with file mappings`));
-  console.log(chalk.gray('  3. Submit to registry: https://bifrost-plugins.dev/submit'));
+  console.log(chalk.gray('  3. Submit to registry: https://@a5gard/bifrost-plugins.dev/submit'));
   console.log();
 }
 
@@ -202,7 +202,7 @@ ${config.description}
 ## Installation
 
 \`\`\`bash
-bunx bifrost-plugin ${config.name}
+bunx @a5gard/bifrost-plugin ${config.name}
 \`\`\`
 
 ## Platform
@@ -240,9 +240,7 @@ Add your plugin files to the \`files/\` directory and update \`plugin.bifrost\` 
 
 ## Submit to Registry
 
-Once your plugin is ready, submit it to the Bifrost Plugin Registry:
-
-🔗 [Submit Plugin](https://bifrost-plugins.dev/submit)
+Once your plugin is ready, submit it to the Bifrost Plugin Registry either on the site via the submit button or cli \`bunx @a5gard/bifrost-plugin submit\`
 
 ## Development
 
@@ -258,8 +256,8 @@ MIT © ${username}
 
 ## Links
 
-- [Bifrost Plugin Registry](https://bifrost-plugins.dev)
-- [Plugin Documentation](https://bifrost-plugins.dev/docs)
-- [Submit a Plugin](https://bifrost-plugins.dev/submit)
+- [Bifrost Plugin Registry](https://github.com/A5GARD/BIFROST-PLUGIN)
+- [Plugin Documentation](https://github.com/A5GARD/BIFROST-PLUGIN)
+- [Submit a Plugin](https://github.com/A5GARD/BIFROST-PLUGIN)
 `;
 }
