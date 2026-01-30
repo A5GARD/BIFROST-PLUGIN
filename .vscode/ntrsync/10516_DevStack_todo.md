@@ -10,7 +10,7 @@ JavaScript
 // Inside your extension command
 editor.edit(editBuilder => {
     // 1. Insert the import at the very top (0, 0)
-    editBuilder.insert(new vscode.Position(0, 0), "import { Input } from '#catalyst/Input';\n");
+    editBuilder.insert(new vscode.Position(0, 0), "import { Input } from '#midgardr/Input';\n");
 
     // 2. Insert the usage at the current cursor position
     editBuilder.insert(editor.selection.active, "<Input $0 />");

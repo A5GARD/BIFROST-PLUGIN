@@ -2,7 +2,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
-import prompts from 'prompts';
+import inquirer from 'inquirer';
 import { ConfigEntry } from './types';
 
 export async function processConfigFiles(
@@ -38,16 +38,18 @@ export async function processConfigFiles(
     console.log(configContent);
     console.log(chalk.gray('─'.repeat(50)));
     
-    const { action } = await prompts({
-      type: 'select',
-      name: 'action',
-      message: `How would you like to handle ${config.targetFile}?`,
-      choices: [
-        { title: 'Auto-apply changes', value: 'auto' },
-        { title: 'Copy to clipboard (manual)', value: 'manual' },
-        { title: 'Skip this configuration', value: 'skip' }
-      ]
-    });
+    const { action } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'action',
+        message: `How would you like to handle ${config.targetFile}?`,
+        choices: [
+          { name: 'Auto-apply changes', value: 'auto' },
+          { name: 'Copy to clipboard (manual)', value: 'manual' },
+          { name: 'Skip this configuration', value: 'skip' }
+        ]
+      }
+    ]);
     
     if (action === 'skip') {
       console.log(chalk.yellow(`Skipped ${config.targetFile}`));

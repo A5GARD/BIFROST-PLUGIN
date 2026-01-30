@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
-import prompts from 'prompts';
+import inquirer from 'inquirer';
 import { execSync } from 'child_process';
 
 interface PluginConfig {
@@ -21,42 +21,42 @@ interface PluginConfig {
 export async function createPlugin(): Promise<void> {
   console.log(chalk.blue.bold('\n🚀 Bifrost Plugin Creator\n'));
   
-  const answers = await prompts([
+  const answers = await inquirer.prompt([
     {
-      type: 'text',
+      type: 'input',
       name: 'name',
       message: 'Plugin name:',
       validate: (value) => value.length > 0 ? true : 'Plugin name is required'
     },
     {
-      type: 'select',
+      type: 'list',
       name: 'platform',
       message: 'Select platform:',
       choices: [
-        { title: 'Remix', value: 'remix' },
-        { title: 'Next.js', value: 'nextjs' },
-        { title: 'Vite', value: 'vite' },
-        { title: 'Other', value: 'other' }
+        { name: 'Remix', value: 'remix' },
+        { name: 'Next.js', value: 'nextjs' },
+        { name: 'Vite', value: 'vite' },
+        { name: 'Other', value: 'other' }
       ]
     },
     {
-      type: 'text',
+      type: 'input',
       name: 'description',
       message: 'Description:',
       validate: (value) => value.length > 0 ? true : 'Description is required'
     },
     {
-      type: 'text',
+      type: 'input',
       name: 'tags',
       message: 'Tags (comma-separated):',
-      initial: '',
-      format: (value) => value ? value.split(',').map((t: string) => t.trim()).filter(Boolean) : []
+      default: '',
+      filter: (value) => value ? value.split(',').map((t: string) => t.trim()).filter(Boolean) : []
     },
     {
       type: 'confirm',
       name: 'addLibraries',
       message: 'Would you like to supply required libraries now?',
-      initial: false
+      default: false
     }
   ]);
   
@@ -69,36 +69,42 @@ export async function createPlugin(): Promise<void> {
   
   if (answers.addLibraries) {
     console.log(chalk.gray('\nFormat: @remix-run/react, remix-auth, react'));
-    const { libraryInput } = await prompts({
-      type: 'text',
-      name: 'libraryInput',
-      message: 'Libraries:',
-      initial: ''
-    });
+    const { libraryInput } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'libraryInput',
+        message: 'Libraries:',
+        default: ''
+      }
+    ]);
     
     if (libraryInput) {
       libraries = libraryInput.split(',').map((l: string) => l.trim()).filter(Boolean);
     }
   }
   
-  const { githubUsername } = await prompts({
-    type: 'text',
-    name: 'githubUsername',
-    message: 'GitHub username:',
-    validate: (value) => value.length > 0 ? true : 'GitHub username is required'
-  });
+  const { githubUsername } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'githubUsername',
+      message: 'GitHub username:',
+      validate: (value) => value.length > 0 ? true : 'GitHub username is required'
+    }
+  ]);
   
   if (!githubUsername) {
     console.log(chalk.yellow('\nPlugin creation cancelled'));
     process.exit(0);
   }
   
-  const { autoGithub } = await prompts({
-    type: 'confirm',
-    name: 'autoGithub',
-    message: 'Auto-create and push to GitHub?',
-    initial: true
-  });
+  const { autoGithub } = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'autoGithub',
+      message: 'Auto-create and push to GitHub?',
+      default: true
+    }
+  ]);
   
   const pluginDir = path.join(process.cwd(), answers.name);
   

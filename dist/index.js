@@ -2,7 +2,7 @@
 
 // src/index.ts
 import { Command } from "commander";
-import prompts5 from "prompts";
+import inquirer4 from "inquirer";
 import chalk5 from "chalk";
 
 // src/utils.ts
@@ -29,13 +29,13 @@ import path3 from "path";
 import { execSync } from "child_process";
 import ora from "ora";
 import chalk2 from "chalk";
-import prompts2 from "prompts";
+import inquirer2 from "inquirer";
 
 // src/config-manager.ts
 import fs2 from "fs-extra";
 import path2 from "path";
 import chalk from "chalk";
-import prompts from "prompts";
+import inquirer from "inquirer";
 async function processConfigFiles(pluginGithub, configs) {
   for (const config of configs) {
     const targetPath = path2.join(process.cwd(), config.targetFile);
@@ -61,16 +61,18 @@ Target file ${config.targetFile} does not exist. Skipping...`));
     console.log(chalk.gray("\u2500".repeat(50)));
     console.log(configContent);
     console.log(chalk.gray("\u2500".repeat(50)));
-    const { action } = await prompts({
-      type: "select",
-      name: "action",
-      message: `How would you like to handle ${config.targetFile}?`,
-      choices: [
-        { title: "Auto-apply changes", value: "auto" },
-        { title: "Copy to clipboard (manual)", value: "manual" },
-        { title: "Skip this configuration", value: "skip" }
-      ]
-    });
+    const { action } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "action",
+        message: `How would you like to handle ${config.targetFile}?`,
+        choices: [
+          { name: "Auto-apply changes", value: "auto" },
+          { name: "Copy to clipboard (manual)", value: "manual" },
+          { name: "Skip this configuration", value: "skip" }
+        ]
+      }
+    ]);
     if (action === "skip") {
       console.log(chalk.yellow(`Skipped ${config.targetFile}`));
       continue;
@@ -228,21 +230,25 @@ async function installPlugin(pluginGithub, projectPlatform) {
     }
     spinner = ora("Installing plugin files...").start();
     for (const file of pluginConfig.files) {
-      const shouldUseDefault = await prompts2({
-        type: "confirm",
-        name: "useDefault",
-        message: `Install ${file.name} to ${file.location}?`,
-        initial: true
-      });
+      const { useDefault } = await inquirer2.prompt([
+        {
+          type: "confirm",
+          name: "useDefault",
+          message: `Install ${file.name} to ${file.location}?`,
+          default: true
+        }
+      ]);
       let finalTargetPath = path3.join(process.cwd(), file.location);
-      if (!shouldUseDefault.useDefault) {
-        const customLocation = await prompts2({
-          type: "text",
-          name: "location",
-          message: `Enter custom location for ${file.name}:`,
-          initial: file.location
-        });
-        finalTargetPath = path3.join(process.cwd(), customLocation.location);
+      if (!useDefault) {
+        const { location } = await inquirer2.prompt([
+          {
+            type: "input",
+            name: "location",
+            message: `Enter custom location for ${file.name}:`,
+            default: file.location
+          }
+        ]);
+        finalTargetPath = path3.join(process.cwd(), location);
       }
       const fileUrl = `https://raw.githubusercontent.com/${pluginGithub}/main/files/${file.name}`;
       const fileResponse = await fetch(fileUrl);
@@ -310,46 +316,46 @@ function detectPackageManager() {
 import fs4 from "fs-extra";
 import path4 from "path";
 import chalk3 from "chalk";
-import prompts3 from "prompts";
+import inquirer3 from "inquirer";
 import { execSync as execSync2 } from "child_process";
 async function createPlugin() {
   console.log(chalk3.blue.bold("\n\u{1F680} Bifrost Plugin Creator\n"));
-  const answers = await prompts3([
+  const answers = await inquirer3.prompt([
     {
-      type: "text",
+      type: "input",
       name: "name",
       message: "Plugin name:",
       validate: (value) => value.length > 0 ? true : "Plugin name is required"
     },
     {
-      type: "select",
+      type: "list",
       name: "platform",
       message: "Select platform:",
       choices: [
-        { title: "Remix", value: "remix" },
-        { title: "Next.js", value: "nextjs" },
-        { title: "Vite", value: "vite" },
-        { title: "Other", value: "other" }
+        { name: "Remix", value: "remix" },
+        { name: "Next.js", value: "nextjs" },
+        { name: "Vite", value: "vite" },
+        { name: "Other", value: "other" }
       ]
     },
     {
-      type: "text",
+      type: "input",
       name: "description",
       message: "Description:",
       validate: (value) => value.length > 0 ? true : "Description is required"
     },
     {
-      type: "text",
+      type: "input",
       name: "tags",
       message: "Tags (comma-separated):",
-      initial: "",
-      format: (value) => value ? value.split(",").map((t) => t.trim()).filter(Boolean) : []
+      default: "",
+      filter: (value) => value ? value.split(",").map((t) => t.trim()).filter(Boolean) : []
     },
     {
       type: "confirm",
       name: "addLibraries",
       message: "Would you like to supply required libraries now?",
-      initial: false
+      default: false
     }
   ]);
   if (!answers.name) {
@@ -359,32 +365,38 @@ async function createPlugin() {
   let libraries = [];
   if (answers.addLibraries) {
     console.log(chalk3.gray("\nFormat: @remix-run/react, remix-auth, react"));
-    const { libraryInput } = await prompts3({
-      type: "text",
-      name: "libraryInput",
-      message: "Libraries:",
-      initial: ""
-    });
+    const { libraryInput } = await inquirer3.prompt([
+      {
+        type: "input",
+        name: "libraryInput",
+        message: "Libraries:",
+        default: ""
+      }
+    ]);
     if (libraryInput) {
       libraries = libraryInput.split(",").map((l) => l.trim()).filter(Boolean);
     }
   }
-  const { githubUsername } = await prompts3({
-    type: "text",
-    name: "githubUsername",
-    message: "GitHub username:",
-    validate: (value) => value.length > 0 ? true : "GitHub username is required"
-  });
+  const { githubUsername } = await inquirer3.prompt([
+    {
+      type: "input",
+      name: "githubUsername",
+      message: "GitHub username:",
+      validate: (value) => value.length > 0 ? true : "GitHub username is required"
+    }
+  ]);
   if (!githubUsername) {
     console.log(chalk3.yellow("\nPlugin creation cancelled"));
     process.exit(0);
   }
-  const { autoGithub } = await prompts3({
-    type: "confirm",
-    name: "autoGithub",
-    message: "Auto-create and push to GitHub?",
-    initial: true
-  });
+  const { autoGithub } = await inquirer3.prompt([
+    {
+      type: "confirm",
+      name: "autoGithub",
+      message: "Auto-create and push to GitHub?",
+      default: true
+    }
+  ]);
   const pluginDir = path4.join(process.cwd(), answers.name);
   if (await fs4.pathExists(pluginDir)) {
     console.error(chalk3.red(`
@@ -535,10 +547,10 @@ MIT \xA9 ${username}
 import fs5 from "fs-extra";
 import path5 from "path";
 import chalk4 from "chalk";
-import prompts4 from "prompts";
+import prompts from "prompts";
 import { execSync as execSync3 } from "child_process";
 var REGISTRY_REPO = "A5GARD/BIFROST-PLUGIN";
-var REGISTRY_FILE = "dist/registry.bifrost";
+var REGISTRY_FILE = "registry.bifrost";
 async function submitPlugin() {
   console.log(chalk4.blue.bold("\n\u{1F4E4} Submit Plugin to Registry\n"));
   const pluginConfigPath = path5.join(process.cwd(), "plugin.bifrost");
@@ -557,7 +569,7 @@ async function submitPlugin() {
   console.log(`Tags: ${chalk4.white(pluginConfig.tags.join(", "))}`);
   console.log(`Libraries: ${chalk4.white(pluginConfig.libraries.join(", "))}`);
   console.log(chalk4.gray("\u2500".repeat(50)));
-  const { confirm } = await prompts4({
+  const { confirm } = await prompts({
     type: "confirm",
     name: "confirm",
     message: "Submit this plugin to the registry?",
@@ -695,16 +707,18 @@ Error: ${error instanceof Error ? error.message : "Unknown error"}`));
 });
 async function interactiveMode() {
   console.log(chalk5.blue.bold("\n\u{1F309} bifrost Plugin Manager\n"));
-  const { action } = await prompts5({
-    type: "select",
-    name: "action",
-    message: "What would you like to do?",
-    choices: [
-      { title: "List available plugins to install", value: "list" },
-      { title: "Plugin wizard (create your own plugin)", value: "create" },
-      { title: "Submit plugin to registry", value: "submit" }
-    ]
-  });
+  const { action } = await inquirer4.prompt([
+    {
+      type: "list",
+      name: "action",
+      message: "What would you like to do?",
+      choices: [
+        { name: "List available plugins to install", value: "list" },
+        { name: "Plugin wizard (create your own plugin)", value: "create" },
+        { name: "Submit plugin to registry", value: "submit" }
+      ]
+    }
+  ]);
   if (!action) {
     console.log(chalk5.yellow("\nCancelled"));
     process.exit(0);
@@ -736,15 +750,17 @@ async function listPlugins() {
     console.log(chalk5.yellow(`No plugins available for platform: ${projectConfig.platform}`));
     process.exit(0);
   }
-  const { selectedPlugin } = await prompts5({
-    type: "select",
-    name: "selectedPlugin",
-    message: "Select a plugin to install:",
-    choices: compatiblePlugins.map((p) => ({
-      title: `${p.name} - ${p.description}`,
-      value: p
-    }))
-  });
+  const { selectedPlugin } = await inquirer4.prompt([
+    {
+      type: "list",
+      name: "selectedPlugin",
+      message: "Select a plugin to install:",
+      choices: compatiblePlugins.map((p) => ({
+        name: `${p.name} - ${p.description}`,
+        value: p
+      }))
+    }
+  ]);
   if (!selectedPlugin) {
     console.log(chalk5.yellow("Installation cancelled"));
     process.exit(0);

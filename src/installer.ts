@@ -5,7 +5,7 @@ import path from 'path';
 import { execSync } from 'child_process';
 import ora from 'ora';
 import chalk from 'chalk';
-import prompts from 'prompts';
+import inquirer from 'inquirer';
 import { PluginConfig } from './types';
 import { processConfigFiles } from './config-manager';
 
@@ -34,24 +34,28 @@ export async function installPlugin(pluginGithub: string, projectPlatform: strin
     spinner = ora('Installing plugin files...').start();
     
     for (const file of pluginConfig.files) {
-      const shouldUseDefault = await prompts({
-        type: 'confirm',
-        name: 'useDefault',
-        message: `Install ${file.name} to ${file.location}?`,
-        initial: true
-      });
+      const { useDefault } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'useDefault',
+          message: `Install ${file.name} to ${file.location}?`,
+          default: true
+        }
+      ]);
       
       let finalTargetPath = path.join(process.cwd(), file.location);
       
-      if (!shouldUseDefault.useDefault) {
-        const customLocation = await prompts({
-          type: 'text',
-          name: 'location',
-          message: `Enter custom location for ${file.name}:`,
-          initial: file.location
-        });
+      if (!useDefault) {
+        const { location } = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'location',
+            message: `Enter custom location for ${file.name}:`,
+            default: file.location
+          }
+        ]);
         
-        finalTargetPath = path.join(process.cwd(), customLocation.location);
+        finalTargetPath = path.join(process.cwd(), location);
       }
       
       const fileUrl = `https://raw.githubusercontent.com/${pluginGithub}/main/files/${file.name}`;

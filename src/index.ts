@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { Command } from 'commander';
-import prompts from 'prompts';
+import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { getProjectConfig, getRegistry, validatePlatformCompatibility } from './utils';
 import { installPlugin } from './installer';
@@ -93,16 +93,18 @@ program
 async function interactiveMode(): Promise<void> {
   console.log(chalk.blue.bold('\n🌉 bifrost Plugin Manager\n'));
   
-  const { action } = await prompts({
-    type: 'select',
-    name: 'action',
-    message: 'What would you like to do?',
-    choices: [
-      { title: 'List available plugins to install', value: 'list' },
-      { title: 'Plugin wizard (create your own plugin)', value: 'create' },
-      { title: 'Submit plugin to registry', value: 'submit' }
-    ]
-  });
+  const { action } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'action',
+      message: 'What would you like to do?',
+      choices: [
+        { name: 'List available plugins to install', value: 'list' },
+        { name: 'Plugin wizard (create your own plugin)', value: 'create' },
+        { name: 'Submit plugin to registry', value: 'submit' }
+      ]
+    }
+  ]);
   
   if (!action) {
     console.log(chalk.yellow('\nCancelled'));
@@ -141,15 +143,17 @@ async function listPlugins(): Promise<void> {
     process.exit(0);
   }
   
-  const { selectedPlugin } = await prompts({
-    type: 'select',
-    name: 'selectedPlugin',
-    message: 'Select a plugin to install:',
-    choices: compatiblePlugins.map(p => ({
-      title: `${p.name} - ${p.description}`,
-      value: p
-    }))
-  });
+  const { selectedPlugin } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'selectedPlugin',
+      message: 'Select a plugin to install:',
+      choices: compatiblePlugins.map(p => ({
+        name: `${p.name} - ${p.description}`,
+        value: p
+      }))
+    }
+  ]);
   
   if (!selectedPlugin) {
     console.log(chalk.yellow('Installation cancelled'));

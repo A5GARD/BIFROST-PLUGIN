@@ -29,7 +29,7 @@ interface RegistryEntry {
 }
 
 const REGISTRY_REPO = 'A5GARD/BIFROST-PLUGIN';
-const REGISTRY_FILE = 'dist/registry.bifrost';
+const REGISTRY_FILE = 'registry.bifrost';
 
 export async function submitPlugin(): Promise<void> {
   console.log(chalk.blue.bold('\n📤 Submit Plugin to Registry\n'));

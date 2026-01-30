@@ -1,8 +1,7 @@
-# @a5gard/bifrost-plugin
+# bifrost-plugin
 
 Plugin installer / wizard for bifrost projects.
 
-## Installing A Plugin
 
 ### Interactive Mode
 
@@ -17,7 +16,9 @@ Entering interactive mode it will display the following options:
 - Plugin wizard ( guide in creating your own plugin )
 - Submit Plugin
 
-## `List available plugins to install` 
+## Installing A Plugin
+
+### `List available plugins to install` 
 
 Running the following command will start plugin installation process:
 

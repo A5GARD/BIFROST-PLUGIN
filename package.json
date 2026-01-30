@@ -7,7 +7,9 @@
     "bifrost-plugin": "dist/index.js"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean",
+    "copy-registry": "bun copy-registry.js",
+    "build:tsup": "tsup src/index.ts --format esm --dts --clean",
+    "build": "npm run build:tsup && npm run copy-registry ",
     "dev": "tsup src/index.ts --format esm --dts --watch",
     "typecheck": "tsc --noEmit"
   },
@@ -25,17 +27,18 @@
   "author": "8an3",
   "license": "MIT",
   "dependencies": {
-    "commander": "^11.1.0",
-    "prompts": "^2.4.2",
     "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^13.2.2",
     "ora": "^8.0.1",
-    "fs-extra": "^11.2.0"
+    "prompts": "^2.4.2"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.5",
     "@types/prompts": "^2.4.9",
-    "@types/fs-extra": "^11.0.4",
-    "typescript": "^5.3.3",
-    "tsup": "^8.0.1"
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
   }
 }
